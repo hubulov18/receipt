@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  receipt-db:
+    container_name: receipt-db
+    image: postgres:latest
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+  app:
+    entrypoint: "/bin/sh ./scripts/start.dev.sh"
+    container_name: app
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    working_dir: /app
+    env_file:
+      - .env
+    volumes:
+      - .:/receiptchecker
+      - /receiptChecker/node_modules
+    ports:
+      - "3000:3000"
+      - "5000:5000"
+      - "9229:9229"
+    depends_on:
+      - receipt-db
+    links:
+      - receipt-db
+#    command: ["./wait-for-postgres.sh", "receipt-db", "npm run watch"]
+    restart: always
+volumes:
+  pgdata:

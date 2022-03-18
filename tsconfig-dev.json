@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // переопределяем настройки, которые нужны только для dev режима
+    "sourceMap": true,
+    "watch": true,
+    "inlineSourceMap": true,
+    "inlineSources": true
+  }
+}
